@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "webpack serve --mode=development",
-    "start-prod": "nodemon index.js",
+    "start-prod": "node index.js",
     "test": "jest",
     "eslint": "eslint './**/*.{js,jsx}'",
     "build": "webpack --mode production",
