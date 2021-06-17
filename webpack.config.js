@@ -29,7 +29,7 @@ const config = {
         use: ['style-loader', 'css-loader']
       },
     ]
-  }
+  },
 }
 
 module.exports = config
