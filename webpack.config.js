@@ -1,10 +1,12 @@
+const HtmlWebPackPlugin = require('html-webpack-plugin')
 const path = require('path')
 
 const config = {
   entry: ['@babel/polyfill', './src/index.js'],
   output: {
     path: path.resolve(__dirname, 'build'),
-    filename: 'main.js'
+    filename: 'main.js',
+    publicPath: '/'
   },
   devServer: {
     contentBase: path.resolve(__dirname, 'build'),
@@ -28,8 +30,25 @@ const config = {
         test: /\.css$/,
         use: ['style-loader', 'css-loader']
       },
+      {
+        test: /\.html$/,
+        use: [
+          {
+            loader: 'html-loader',
+          },
+        ],
+      },
     ]
   },
+  resolve: {
+    extensions: ["*", ".js", ".jsx"],
+  },
+  plugins: [
+    new HtmlWebPackPlugin({
+      template: "./public/index.html",
+      filename: "./index.html",
+    }),
+  ],
 }
 
 module.exports = config
