@@ -7,20 +7,20 @@ require('dotenv').config()
 const Person = require('./models/person')
 
 morgan.token('content', function getContent(request) {
-    return request.content
+  return request.content
 })
 
 const assignContent = (request, response, next) => {
-    request.content = JSON.stringify(request.body)
-    next()
-} 
+  request.content = JSON.stringify(request.body)
+  next()
+}
 
 const requestLogger = (request, response, next) => {
-    console.log('Method: ', request.method)
-    console.log('Path: ', request.path)
-    console.log('Body: ', request.body)
-    console.log('---')
-    next()
+  console.log('Method: ', request.method)
+  console.log('Path: ', request.path)
+  console.log('Body: ', request.body)
+  console.log('---')
+  next()
 }
 
 const unknownEndpoint = (request, response) => {
@@ -33,13 +33,13 @@ app.use(cors())
 app.use(requestLogger)
 app.use(assignContent)
 app.use(morgan(
-    ':method :url :status :res[content-length] - :response-time ms :content'
-    ))
+  ':method :url :status :res[content-length] - :response-time ms :content'
+))
 
 app.get('/api/persons', (request, response) => {
-    Person.find({}).then(persons => {
-      response.json(persons)
-    })
+  Person.find({}).then(persons => {
+    response.json(persons)
+  })
 })
 
 app.get('/api/persons/:id', (request, response) => {
@@ -61,19 +61,19 @@ app.get('/info', (request, response) => {
 app.post('/api/persons', (request, response, next) => {
   const body = request.body
   if (body.name === undefined) {
-      return response.status(400).json({
-          error: 'name missing'
-      })
+    return response.status(400).json({
+      error: 'name missing'
+    })
   }
   if (body.number === undefined) {
-      return response.status(400).json({
-          error: 'number missing'
-      })
+    return response.status(400).json({
+      error: 'number missing'
+    })
   }
- 
+
   const person = new Person ({
-      name: body.name,
-      number: body.number,
+    name: body.name,
+    number: body.number,
   })
 
   person.save()
@@ -85,7 +85,7 @@ app.post('/api/persons', (request, response, next) => {
 
 app.delete('/api/persons/:id', (request, response, next) => {
   Person.findByIdAndRemove(request.params.id)
-    .then(result => {
+    .then(() => {
       response.status(204).end()
     })
     .catch(error => next(error))
@@ -115,7 +115,6 @@ const errorHandler = (error, request, response, next) => {
   } else if (error.name === 'ValidationError') {
     return response.status(400).json({ error: error.message })
   }
-  
   next(error)
 }
 

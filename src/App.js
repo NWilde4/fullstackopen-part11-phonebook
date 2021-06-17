@@ -30,22 +30,22 @@ const App = () => {
 
   const handleNameChange = (event) => {
     setNewName(event.target.value)
-  }  
-  
+  }
+
   const handleNumberChange = (event) => {
     setNewNumber(event.target.value)
-  }  
+  }
 
   const handleFilterStringChange = (event) => {
     setStringFilter(event.target.value)
-  } 
+  }
 
   const deletePerson = (id) => {
     const toDelete = persons.find(p => p.id === id)
     const ok = window.confirm(`Delete ${toDelete.name}`)
     if (ok) {
       personService.remove(id)
-        .then(response => {
+        .then(() => {
           setPersons(persons.filter(p => p.id !== id))
           notifyWith(`Deleted ${toDelete.name}`)
         }).catch(() => {
@@ -77,7 +77,7 @@ const App = () => {
       personService
         .create({
           name: newName,
-          number: newNumber   
+          number: newNumber
         })
         .then(addedPerson => {
           setPersons(persons.concat(addedPerson))
@@ -88,13 +88,13 @@ const App = () => {
         .catch(error => {
           // pääset käsiksi palvelimen palauttamaan virheilmoitusolioon näin
           notifyWith(`${error.response.data.error} `, 'error')
-      })
+        })
     }
   }
 
   const personsToShow = filterString.length === 0 ?
-    persons : 
-    persons.filter(p => p.name.toLowerCase().indexOf(filterString.toLowerCase()) > 0 )
+    persons :
+    persons.filter(p => p.name.toLowerCase().includes(filterString.toLowerCase()))
 
   return (
     <div>
@@ -102,21 +102,21 @@ const App = () => {
 
       <Notification notification={notification} />
 
-      filter shown with: 
+      filter shown with:
       <Filter
         value={filterString}
         onChange={handleFilterStringChange}
       />
 
       <h3>add a new</h3>
-      <PersonForm 
+      <PersonForm
         handleNameChange={handleNameChange}
         handleNumberChange={handleNumberChange}
         newNumber={newNumber}
         newName={newName}
         addPerson={addPerson}
       />
-     
+
       <h3>Numbers</h3>
       <Persons persons={personsToShow} deletePerson={deletePerson}/>
     </div>
@@ -124,4 +124,4 @@ const App = () => {
 
 }
 
-export default App 
+export default App
