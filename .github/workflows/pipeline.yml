@@ -36,3 +36,4 @@ jobs:
           heroku_email: "wilde.norman@yahoo.com"
           healthcheck: "https://frozen-bayou-84931.herokuapp.com/health"
           checkstring: "ok"
+          rollbackonhealthcheckfailed: true
