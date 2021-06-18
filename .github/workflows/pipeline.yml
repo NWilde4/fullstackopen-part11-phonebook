@@ -28,10 +28,11 @@ jobs:
           command: npm run test:e2e
           start: npm run start-prod
           wait-on: http://localhost:3001
-      - uses: actions/checkout@v2
       - name: deploy
         uses: akhileshns/heroku-deploy@v3.12.12
         with:
           heroku_api_key: ${{secrets.HEROKU_API_KEY}}
           heroku_app_name: "frozen-bayou-84931"
           heroku_email: "wilde.norman@yahoo.com"
+          healthcheck: "https://frozen-bayou-84931.herokuapp.com/health"
+          checkstring: "ok"
