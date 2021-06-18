@@ -26,6 +26,14 @@ jobs:
         run: npm run eslint
       - name: build
         run: npm run build
+      - name: Send notification to Slack if build failed
+        uses: 8398a7/action-slack@v3
+        with:
+          status: ${{ job.status }}
+          fields: repo,message,commit,author,action,eventName,ref,workflow,job,took
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        if: failure()      
       - name: e2e tests
         uses: cypress-io/github-action@v2
         with:
@@ -42,6 +50,21 @@ jobs:
           healthcheck: "https://frozen-bayou-84931.herokuapp.com/health"
           checkstring: "ok"
           rollbackonhealthcheckfailed: true
+      - name: Send notification to Slack if deployment succeeded
+        uses: 8398a7/action-slack@v3
+        with:
+          status: custom
+          fields: workflow,job,commit,repo,ref,author,took
+          custom_payload: |
+            {
+              attachments: [{
+                color: '${{ job.status }}' === 'success' ? 'good' : '${{ job.status }}' === 'failure' ? 'danger' : 'warning',
+                text: `a new version deployed to https://pokedex-norman-wilde.herokuapp.com/ (${process.env.AS_COMMIT}) by ${process.env.AS_AUTHOR} build took ${process.env.AS_TOOK}`,
+              }]
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        if: success()
       - uses: actions/checkout@v2
       - name: Bump version and push tag
         if: ${{ env.CONTAINS_SKIP == 'false' && github.event_name == 'push' }}
