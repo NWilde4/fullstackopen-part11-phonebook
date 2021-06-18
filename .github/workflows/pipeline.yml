@@ -50,6 +50,7 @@ jobs:
           healthcheck: "https://frozen-bayou-84931.herokuapp.com/health"
           checkstring: "ok"
           rollbackonhealthcheckfailed: true
+      - uses: actions/checkout@v2
       - name: Send notification to Slack if deployment succeeded
         uses: 8398a7/action-slack@v3
         with:
