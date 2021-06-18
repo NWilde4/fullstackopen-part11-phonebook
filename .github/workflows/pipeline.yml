@@ -12,6 +12,7 @@ jobs:
   simple_deployment_pipeline:
     runs-on: ubuntu-18.04
     env:
+      CONTAINS_SKIP: ${{ contains(join(github.event.commits.*.message), 'skip') }}
       PORT: 3001
       MONGODB_URI: ${{ secrets.MONGODB_URI }}
     steps:
@@ -32,7 +33,7 @@ jobs:
           start: npm run start-prod
           wait-on: http://localhost:3001
       - name: deploy
-        if: ${{ github.event_name == 'push' }}
+        if: ${{ env.CONTAINS_SKIP == 'false' && github.event_name == 'push' }}
         uses: akhileshns/heroku-deploy@v3.12.12
         with:
           heroku_api_key: ${{secrets.HEROKU_API_KEY}}
@@ -43,7 +44,7 @@ jobs:
           rollbackonhealthcheckfailed: true
       - uses: actions/checkout@v2
       - name: Bump version and push tag
-        if: ${{ github.event_name == 'push' }}
+        if: ${{ env.CONTAINS_SKIP == 'false' && github.event_name == 'push' }}
         uses: anothrNick/github-tag-action@1.33.0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
